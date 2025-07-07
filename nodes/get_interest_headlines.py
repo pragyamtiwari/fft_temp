@@ -11,7 +11,7 @@ from models import Headline
 
 def get_interest_headlines(interest):
     interest_name_parsed = interest.name.replace(" ", "+")
-    num_results = 30
+    num_results = 20
 
     url = f"https://google.serper.dev/news?q={interest_name_parsed}&num={num_results}&tbs=qdr%3Ad&apiKey={SERPER_API_KEY}"
 

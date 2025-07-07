@@ -10,11 +10,11 @@ from models import Headline
 
 
 def get_interest_headlines(interest):
-    # interest = user.interest
     interest_name_parsed = interest.name.replace(" ", "+")
-    num_results = 20
+    num_results = 30
 
-    url = f"https://google.serper.dev/news?q={interest_name_parsed}&num={num_results}&apiKey={SERPER_API_KEY}"
+    url = f"https://google.serper.dev/news?q={interest_name_parsed}&num={num_results}&tbs=qdr%3Ad&apiKey={SERPER_API_KEY}"
+
 
     response = requests.get(url)
     
@@ -30,11 +30,17 @@ def get_interest_headlines(interest):
         interest.headlines.append(headline)
 
 if __name__ == "__main__":
-    from models import User
+    from models import User, Interest
+    interests = [
+        Interest("United States politics", previously_selected_headline_titles=set()),
+        Interest("World politics", previously_selected_headline_titles=set()),
+        Interest("Indian politics", previously_selected_headline_titles=set()),
+        ]
+    
+    for interest in interests:
+        get_interest_headlines(interest)
+        print(interest)
 
-    user = User("James", ["United States politics", "Health", "Sports"])
-    get_interest_headlines(user)
-    print(user.interest)
 
 
 

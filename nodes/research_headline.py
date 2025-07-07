@@ -7,7 +7,6 @@ from linkup import LinkupClient
 client = LinkupClient(api_key=os.getenv("LINKUP_API_KEY"))
 
 def research_headline(interest):
-    # interest = user.interest
     headline = interest.selected_headline
     snippet = headline.snippet if headline.snippet else ""
 

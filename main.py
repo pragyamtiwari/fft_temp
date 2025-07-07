@@ -11,7 +11,7 @@ from models import Interest
 import time
 
 users = [
-    User(name="James", zip_code="10016", interest_names=["World politics", "United States politics"])
+    User(name="Pragyam", zip_code="10016", interest_names=["Indian politics", "United States politics", "Startups"])
 ]
 
 

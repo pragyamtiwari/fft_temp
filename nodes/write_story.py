@@ -29,8 +29,8 @@ class Story(BaseModel):
 
     def __str__(self):
         return (
-            f"## Heading: {self.heading}\n\n"
-            f"### Subheading: {self.subheading}\n\n"
+            f"## {self.heading}\n\n"
+            f"### {self.subheading}\n\n"
             f"### What's happening: {self.whats_happening}\n\n"
             f"### What's the context: {self.whats_the_context}\n\n"
             f"### Why it matters: {self.why_it_matters}\n\n"
@@ -39,7 +39,6 @@ class Story(BaseModel):
         )
 
 def write_story(interest):
-    # interest = user.interest
     headline = interest.selected_headline
 
     response = client.chat.completions.parse(

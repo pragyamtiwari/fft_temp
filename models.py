@@ -4,7 +4,7 @@ class Headline:
         self.source = source
         self.snippet = snippet
         self.date = date
-        self.research = None
+        self.research = []
 
     def __str__(self):
         return f"Title: {self.title}\nSource: {self.source}\nDate: {self.date}\nSnippet: {self.snippet}"

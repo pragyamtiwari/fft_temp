@@ -10,7 +10,6 @@ from typing import Optional
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 class SelectedHeadlineDetails(BaseModel):
-    any_interesting_headline: bool
     headline_index: Optional[int]
     reasoning: str
 
@@ -20,16 +19,27 @@ client = OpenAI(
 )
 
 def select_interest_headline(interest):
-    # interest = user.interest
-    print(interest.name)
-    print(f"You will be given a list of headlines for the topic of {interest.name}, you must decide two things. 1) Whether or not there exists at least one headline that is interesting and impactful. If such a headline exists, you should populate any_interesting_headline with True. If no such headline exists, you should populate any_interesting_headline with False. 2) If any_interesting_headline is True, you must also populate headline_index with the 1-based index of the most interesting headline in the list. If any_interesting_headline is False, you should populate headline_index with None. You must disregard any news older than 1 week. Additionally, do not select any headlines covering the same topics that are in the exclude list since they have already been explored in a previous iteration. Exclude list: {str(interest.previously_selected_headline_titles)}. Do note the two exceptions: 1) If the list is empty or does not exist, you may entirely disregard it. 2) If the new headline contains new, significant information and was recrently published (less than 24 hours ago), you may select it. Prioritize coverage from reputable outlets. Ignore opinion headlines. Ignore headlines like stock reccomendations, top 10 lists, etc.")
 
+    system_prompt = f"""You will be given a list of recent news headlines for the topic of {interest.name}. Your task is to identify the most "suitable" headline from the list.
+    
+    A headline is suitable based on the following characteristics: newsworthiness, impact, engagement-inducing, novelty, objectivity, source reputation, and, most importantly, journalistic value. Weigh these characteristics carefully and make a decision about the most suitable headline. You should also note that if a subject matter comes up in many headlines from different sources, it is likely important and you may select the best of them. That said, it is possible that a bad headline is repeated many times and you should not select it. Use your best judgement to make this decision.
+
+    After you analyze each headline, choose the most suitable headline and return its 1-based index. Additionally, provide a short reasoning behind your decision.
+
+    That said, it is possible that no headlines are sufficiently suitable. This is common when the topic itself is not typically newsworthy. In that case, you can return None for the headline index and a short reasoning behind your decision. Sometimes, it is preferable to not select any headline if all are unsuitable and sometimes it is preferable to choose the best of the bad. You must make this decision based on the context of the topic and the availability of headlines.
+
+    You must exclude any headlines that are sensationalist, biased, opinionated, or otherwise not journalistic in nature. This include listicles, stock reccomendations, and other low-quality content. 
+
+    You should also exclude any headlines that cover the topics in the exclude list: {list(interest.previously_selected_headline_titles)}. If the list is empty or does not exist, you may entirely disregard this condition. The headlines in the exclude list were selected in previous iterations and re-selection may be repetitive for the reader. That said, if there are important updates to the topic, you may select a headline despite it being related to an element on the exclude list.
+
+    Do not select overly-academic headlines or low-quality content. Interesting, engaging, novel, and entertaining headlines are preferred, but since this is a subjective matter, you must exercise your best judgement. You must ask yourself the question whether the headline you select would be of interest to a sophisticated, millennial American audience and worthy of publication on a major news website. Remeber to focus on factual content of current affairs, though broader trend piece may also be of interest. 
+    """
 
     response = client.chat.completions.parse(
 
     model="gemini-2.5-flash",
     messages=[
-        {"role": "system", "content": f"You will be given a list of headlines for the topic of {interest.name}, you must decide two things. 1) Whether or not there exists at least one headline that is interesting and impactful. If such a headline exists, you should populate any_interesting_headline with True. If no such headline exists, you should populate any_interesting_headline with False. 2) If any_interesting_headline is True, you must also populate headline_index with the 1-based index of the most interesting headline in the list. If any_interesting_headline is False, you should populate headline_index with None. Additionally, do not select any headlines covering the same topics that are in the exclude list since they have already been explored in a previous iteration. Exclude list: {interest.previously_selected_headline_titles if interest.previously_selected_headline_titles else "[]"}. Do note the two exceptions: 1) If the list is empty or does not exist, you may entirely disregard it. 2) If the new headline contains new, significant information, you may select it."},
+        {"role": "system", "content": system_prompt},
         {
             "role": "user",
             "content": str(interest),
@@ -38,27 +48,27 @@ def select_interest_headline(interest):
     response_format=SelectedHeadlineDetails,
 )
     parsed_response = response.choices[0].message.parsed
-    print(parsed_response)
-    
-    if parsed_response.any_interesting_headline:
-        interest.selected_headline_index = parsed_response.headline_index - 1
-    else:
-        interest.selected_headline_index = None
+    print(f"Reasoning: {parsed_response.reasoning}")
+
+    interest.selected_headline_index = parsed_response.headline_index - 1 if parsed_response.headline_index is not None else None
 
 if __name__ == "__main__":
     from nodes.get_interest_headlines import get_interest_headlines
-    from models import User, Interest
-    interests = [
-        # Interest("United States politics", previously_selected_headline_titles=set(["Elon Musk launches new political party"])),
-        Interest("Pakistani politics", previously_selected_headline_titles=set()),
-        Interest("Soccer", previously_selected_headline_titles=set()),
-        Interest("Cricket", previously_selected_headline_titles=set()),
-        Interest("Artificial intelligence", previously_selected_headline_titles=set()),
-        # Interest("Indian politics", previously_selected_headline_titles=set(["Jagdeep Dhankar disgruntled about 'secular' and 'socialist' in Constitution"])),
-        ]
+    from models import Interest
+    
+    interests = []
+
+    test_interest_names = ["United States politics", "Indian politics", "Pakistani politics", "Soccer", "Technology", "Startups", "Cricket", "Hollywood", "World Affairs", "Artificial intelligence"]
+
+    for interest_name in test_interest_names:
+        interests.append(Interest(interest_name))
+
     
     for interest in interests:
         print(f"Processing interest: {interest.name}")
         get_interest_headlines(interest)
         select_interest_headline(interest)
-        print(interest.selected_headline)
+        print(interest.selected_headline.title)
+        print(interest.selected_headline.source)
+        print("\n\n\n\n")
+        

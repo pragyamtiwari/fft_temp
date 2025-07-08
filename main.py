@@ -11,8 +11,14 @@ from models import Interest
 import time
 
 users = [
-    User(name="Pragyam", zip_code="10016", interest_names=["Indian politics", "United States politics", "Startups"])
+    User(name="Pragyam", zip_code="10016", interest_names=["Indian politics", "United States politics", "Startups", "World politics"])
 ]
+
+hm = {
+    "Indian politics": "Vice President Jagdeep Dhankar opposes 'secular' in constitution.",
+    "United States politics": "Elon Musk launches new political party after Trump feud",
+    "World politics": "Iran leaves IAEA."
+}
 
 
 forecasts = {}
@@ -20,7 +26,7 @@ forecasts = {}
 for user in users:
     for interest in user.interests:
         if interest.name not in explored_interest_stories:
-            interest = Interest(name=interest.name, previously_selected_headline_titles=set())
+            interest = Interest(name=interest.name, previously_selected_headline_titles={hm[interest.name]} if interest.name in hm else set())
             get_interest_headlines(interest)
             select_interest_headline(interest)
             if interest.selected_headline_index is None:

@@ -7,41 +7,39 @@ SERPER_API_KEY = os.getenv("SERPER_API_KEY")
 import requests
 
 from models import Headline
+from config import NUM_SERP_RESULTS, SERP_FRESHNESS
 
 
 def get_interest_headlines(interest):
     interest_name_parsed = interest.name.replace(" ", "+")
-    num_results = 20
+    num_results = NUM_SERP_RESULTS
 
-    url = f"https://google.serper.dev/news?q={interest_name_parsed}&num={num_results}&tbs=qdr%3Ad&apiKey={SERPER_API_KEY}"
-
+    url = f"https://google.serper.dev/news?q={interest_name_parsed}&num={num_results}&tbs=qdr%3A{SERP_FRESHNESS}&apiKey={SERPER_API_KEY}"
 
     response = requests.get(url)
-    
-    count = 0
 
     for article in response.json()["news"]:
+        if "title" not in article or "source" not in article or "date" not in article:
+            continue
+        
         headline = Headline(
-            title = article["title"],
-            source = article["source"],
-            snippet = article.get("snippet", None),
-            date = article["date"],
+            title=article["title"],
+            source=article["source"],
+            snippet=article.get("snippet", None),
+            date=article["date"],
         )
         interest.headlines.append(headline)
 
+
 if __name__ == "__main__":
     from models import User, Interest
+    
     interests = [
-        Interest("United States politics", previously_selected_headline_titles=set()),
-        Interest("World politics", previously_selected_headline_titles=set()),
-        Interest("Indian politics", previously_selected_headline_titles=set()),
-        ]
+        Interest("United States politics"),
+        Interest("World politics"),
+        Interest("Indian politics"),
+    ]
     
     for interest in interests:
         get_interest_headlines(interest)
         print(interest)
-
-
-
-
-

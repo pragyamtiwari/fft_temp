@@ -36,6 +36,8 @@ def get_weather(zip_code):
 
     weather_data['aqi'] = aqi
 
+    # Return weather data as markdown
+    # Convert to HTML with in-line styling
     return f"### Forecast for {weather_data['city']}:\n\n### Current Temperature: {weather_data['current_temp']}\n### Max Temperature: {weather_data['max_temp']}\n### Min Temperature: {weather_data['min_temp']}\n\n### Chance of Rain: {weather_data['rain_chance']}\n### Air Quality Index (AQI): {weather_data['aqi']}\n"
 
 if __name__ == "__main__":

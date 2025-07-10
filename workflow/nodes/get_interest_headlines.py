@@ -6,8 +6,8 @@ SERPER_API_KEY = os.getenv("SERPER_API_KEY")
 
 import requests
 
-from models import Headline
-from config import NUM_SERP_RESULTS, SERP_FRESHNESS
+from workflow.models import Headline
+from workflow.config import NUM_SERP_RESULTS, SERP_FRESHNESS
 
 
 def get_interest_headlines(interest):
@@ -32,7 +32,7 @@ def get_interest_headlines(interest):
 
 
 if __name__ == "__main__":
-    from models import User, Interest
+    from workflow.models import Interest
     
     interests = [
         Interest("United States politics"),

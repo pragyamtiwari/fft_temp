@@ -32,7 +32,7 @@ def select_interest_headline(interest):
 
     You should also exclude any headlines that cover the topics in the exclude list: {list(interest.previously_selected_headline_titles)}. If the list is empty or does not exist, you may entirely disregard this condition. The headlines in the exclude list were selected in previous iterations and re-selection may be repetitive for the reader. That said, if there are important updates to the topic, you may select a headline despite it being related to an element on the exclude list.
 
-    Do not select overly-academic headlines or low-quality content. Interesting, engaging, novel, and entertaining headlines are preferred, but since this is a subjective matter, you must exercise your best judgement. You must ask yourself the question whether the headline you select would be of interest to a sophisticated, millennial American audience and worthy of publication on a major news website. Remeber to focus on factual content of current affairs, though broader trend piece may also be of interest. 
+    Do not select overly-academic headlines or low-quality content. Interesting, engaging, novel, and entertaining headlines are preferred, but since this is a subjective matter, you must exercise your best judgement. You must ask yourself the question whether the headline you select would be of interest to a sophisticated, millennial American audience and worthy of publication on a major news website. Remeber to focus on factual current information rather than broad essays.
     """
 
     response = client.chat.completions.parse(
@@ -53,8 +53,8 @@ def select_interest_headline(interest):
     interest.selected_headline_index = parsed_response.headline_index - 1 if parsed_response.headline_index is not None else None
 
 if __name__ == "__main__":
-    from nodes.get_interest_headlines import get_interest_headlines
-    from models import Interest
+    from workflow.nodes.get_interest_headlines import get_interest_headlines
+    from workflow.models import Interest
     
     interests = []
 

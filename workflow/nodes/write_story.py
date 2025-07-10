@@ -27,6 +27,8 @@ class Story(BaseModel):
     whats_next: str
     tldr: str
 
+    # Return weather data as markdown
+    # Convert to HTML with in-line styling
     def __str__(self):
         return (
             f"## {self.heading}\n\n"
@@ -56,12 +58,12 @@ def write_story(interest):
     interest.selected_headline.story = response.choices[0].message.parsed
 
 if __name__ == "__main__":
-    from models import User
+    from workflow.models import User
 
     user = User("James", ["Startups", "World politics", "Indian politics"])
-    from nodes.get_interest_headlines import get_interest_headlines
-    from nodes.select_interest_headline import select_interest_headline
-    from nodes.research_headline import research_headline
+    from workflow.nodes.get_interest_headlines import get_interest_headlines
+    from workflow.nodes.select_interest_headline import select_interest_headline
+    from workflow.nodes.research_headline import research_headline
     get_interest_headlines(user)
     print(user.interest)
     select_interest_headline(user)

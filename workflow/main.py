@@ -1,23 +1,22 @@
-from models import User
-from cache import explored_interest_stories
+from workflow.models import User
+from workflow.cache import explored_interest_stories
 
-from nodes.get_interest_headlines import get_interest_headlines
-from nodes.select_interest_headline import select_interest_headline
-from nodes.research_headline import research_headline
-from nodes.write_story import write_story
-from nodes.get_weather import get_weather
-from models import Interest
+from workflow.nodes.get_interest_headlines import get_interest_headlines
+from workflow.nodes.select_interest_headline import select_interest_headline
+from workflow.nodes.research_headline import research_headline
+from workflow.nodes.write_story import write_story
+from workflow.nodes.get_weather import get_weather
+from workflow.models import Interest
 
 import time
+import random
 
 users = [
-    User(name="Pragyam", zip_code="10016", interest_names=["Indian politics", "United States politics", "Startups", "World politics"])
+    User(name="Pragyam", zip_code="90001", interest_names=["Indian politics", "World politics", "Economy", "Soccer"])
 ]
 
 hm = {
-    "Indian politics": "Vice President Jagdeep Dhankar opposes 'secular' in constitution.",
-    "United States politics": "Elon Musk launches new political party after Trump feud",
-    "World politics": "Iran leaves IAEA."
+
 }
 
 
@@ -45,11 +44,14 @@ for user in users:
 
 for user in users:
     res = [f"### Good morning, {user.name}.\n", forecasts[user.zip_code], "#### Here are your top stories for today.\n"]
+    random.shuffle(user.interests)
     for interest in user.interests:
         res.append(explored_interest_stories[interest.name])
     res.append("### Thank you for reading.")
     with open(f"{user.name}.md", "w") as f:
         f.write('\n'.join(res))
+    
+
 
 
 

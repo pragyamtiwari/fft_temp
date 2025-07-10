@@ -35,27 +35,27 @@ class Story(BaseModel):
         
         <div style="margin-bottom: 8px;">
             <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">What's happening:</div>
-            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.whats_happening}</div>
+            <div style="color: #444; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.whats_happening}</div>
         </div>
         
         <div style="margin-bottom: 8px;">
             <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">What's the context:</div>
-            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.whats_the_context}</div>
+            <div style="color: #444; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.whats_the_context}</div>
         </div>
         
         <div style="margin-bottom: 8px;">
             <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">Why it matters:</div>
-            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.why_it_matters}</div>
+            <div style="color: #444; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.why_it_matters}</div>
         </div>
         
         <div style="margin-bottom: 8px;">
             <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">What's next:</div>
-            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.whats_next}</div>
+            <div style="color: #444; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.whats_next}</div>
         </div>
         
         <div style="background-color: #f9f9f9; border: 1px solid #ddd; padding: 6px; margin-top: 8px;">
             <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">TL;DR:</div>
-            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.tldr}</div>
+            <div style="color: #444; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.tldr}</div>
         </div>
     </article>
 """
@@ -66,7 +66,7 @@ def write_story(interest):
     response = client.chat.completions.parse(
         model="gemini-2.5-flash",
         messages=[
-            {"role": "system", "content": f"You will be given a research for a news story in {interest.name}. You must write a comprehensive story that includes the following sections: 1) Heading, 2) Subheading, 3) What's happening, 4) What's the context, 5) Why it matters, 6) What's next, and 7) TL;DR. Main sections should be around three short, simple sentences for a total length ideally under 40 words per section. Heading and subheading should be concise and 1 sentence each. That said, you are free to modify these length suggestions if you feel a certain topic does not warrant enough detail and your writing would be trite and repetitve. That said, you cannot entirely omit any of the sections. You are writing for a sophisticated American audience that is aware of current affairs so, while you should not use needless jargon, use necessary details such as names of people, places, organizations, events, bills, etc. You must remain unbiased and qualify any statements that could be interpreted as opinion or speculation. You must not include any sources though you must rely on the given research. You should maintain and objective, BBC-like neutrality in your writing and express cautious skepticism about grand claims. Your writing should follow the spirit of If I Had More Time, I Would Have Written a Shorter Letter. Include dates and quotes from the research in your writing. Do not make any claims that are not supported by the research. Do not make up any dates or quotes that are not in the research. By quotes, I do not mean quoting the research but including quotations from public figures and institutions found within the research itself."},
+            {"role": "system", "content": f"You will be given a research for a news story in {interest.name}. You must write a comprehensive story that includes the following sections: 1) Heading, 2) Subheading, 3) What's happening, 4) What's the context, 5) Why it matters, 6) What's next, and 7) TL;DR. Main sections should be around two-three short, simple sentences for a total length ideally of 25 words per section. Heading and subheading should be concise and 1 sentence each. That said, you are free to modify these length suggestions if you feel a certain topic does not warrant enough detail and your writing would be trite and repetitve. That said, you cannot entirely omit any of the sections. You are writing for a sophisticated American audience that is aware of current affairs so, while you should not use needless jargon, use necessary details such as names of people, places, organizations, events, bills, etc. You must remain unbiased and qualify any statements that could be interpreted as opinion or speculation. You must not include any sources though you must rely on the given research. You should maintain and objective, BBC-like neutrality in your writing and express cautious skepticism about grand claims. Your writing should follow the spirit of If I Had More Time, I Would Have Written a Shorter Letter. Include dates and quotes from the research in your writing. Do not make any claims that are not supported by the research. Do not make up any dates or quotes that are not in the research. By quotes, I do not mean quoting the research but including quotations from public figures and institutions found within the research itself. Avoid repetition and redundancy in your writing. You should not write the same information multiple times, even across sections. Use simple, clear language and avoid jargon and complex vocabulary, aim for a 10th grade reading level. That said, do not sound patronizing or condescending. You can also assume the reader has basic subject knowledge but is not an expert."},
             {
                 "role": "user",
                 "content": f"Research: {headline.research}",

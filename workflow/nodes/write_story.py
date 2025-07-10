@@ -30,15 +30,37 @@ class Story(BaseModel):
     # Return weather data as markdown
     # Convert to HTML with in-line styling
     def __str__(self):
-        return (
-            f"## {self.heading}\n\n"
-            f"### {self.subheading}\n\n"
-            f"### What's happening: {self.whats_happening}\n\n"
-            f"### What's the context: {self.whats_the_context}\n\n"
-            f"### Why it matters: {self.why_it_matters}\n\n"
-            f"### What's next: {self.whats_next}\n\n"
-            f"### TL;DR: {self.tldr}\n\n"
-        )
+        return f"""
+    <article style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+        <h3 style="font-size: 20px; font-weight: bold; color: #000; margin-bottom: 5px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">{self.heading}</h3>
+        <p style="font-size: 18px; color: #666; font-style: italic; margin-bottom: 12px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">{self.subheading}</p>
+        
+        <div style="margin-bottom: 8px;">
+            <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">What's happening:</div>
+            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.whats_happening}</div>
+        </div>
+        
+        <div style="margin-bottom: 8px;">
+            <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">What's the context:</div>
+            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.whats_the_context}</div>
+        </div>
+        
+        <div style="margin-bottom: 8px;">
+            <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">Why it matters:</div>
+            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.why_it_matters}</div>
+        </div>
+        
+        <div style="margin-bottom: 8px;">
+            <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">What's next:</div>
+            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.whats_next}</div>
+        </div>
+        
+        <div style="background-color: #f9f9f9; border: 1px solid #ddd; padding: 6px; margin-top: 8px;">
+            <div style="font-weight: bold; color: #333; margin-bottom: 3px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">TL;DR:</div>
+            <div style="color: #444; text-align: justify; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-size: 17px;">{self.tldr}</div>
+        </div>
+    </article>
+"""
 
 def write_story(interest):
     headline = interest.selected_headline

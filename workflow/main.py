@@ -13,7 +13,7 @@ import time
 import random
 
 users = [
-    User(email="pragyamtiwari@gmail.com", name="Pragyam", zip_code="90001", interest_names=["Indian politics", "Economy", "US politics", "Startups"])
+    User(email="pragyamtiwari@gmail.com", name="James", zip_code="10018", interest_names=["Pakistani politics", "soccer", "Hollywood", "Bollywood"])
 ]
 
 hm = {

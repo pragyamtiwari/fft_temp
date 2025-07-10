@@ -27,8 +27,6 @@ class Story(BaseModel):
     whats_next: str
     tldr: str
 
-    # Return weather data as markdown
-    # Convert to HTML with in-line styling
     def __str__(self):
         return f"""
     <article style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">

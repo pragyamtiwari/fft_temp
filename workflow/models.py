@@ -31,7 +31,8 @@ class Interest:
         return '\n'.join(res)
 
 class User:
-    def __init__(self, name, zip_code, interest_names):
+    def __init__(self, email, name, zip_code, interest_names):
+        self.email = email
         self.name = name
         self.zip_code = zip_code
         self.interests = [Interest(name) for name in interest_names]

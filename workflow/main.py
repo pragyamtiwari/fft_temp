@@ -7,12 +7,13 @@ from workflow.nodes.research_headline import research_headline
 from workflow.nodes.write_story import write_story
 from workflow.nodes.get_weather import get_weather
 from workflow.models import Interest
+from workflow.nodes.send_story import send_story
 
 import time
 import random
 
 users = [
-    User(name="Pragyam", zip_code="90001", interest_names=["Business", "Pakistani politics"])
+    User(email="pragyamtiwari@gmail.com", name="Pragyam", zip_code="90001", interest_names=["Business", "Pakistani politics"])
 ]
 
 hm = {
@@ -73,10 +74,7 @@ for user in users:
 </html>
 """
     res.append(conclusion)
+    send_story(user.email, '\n'.join(res))
     with open(f"{user.name}.html", "w") as f:
         f.write('\n'.join(res))
     
-
-
-
-

@@ -35,9 +35,7 @@ if __name__ == "__main__":
     from workflow.models import Interest
     
     interests = [
-        Interest("startups"),
-        # Interest("World politics"),
-        # Interest("Indian politics"),
+        Interest("startups")
     ]
     
     for interest in interests:

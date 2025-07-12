@@ -13,7 +13,7 @@ import time
 import random
 
 users = [
-    User(email="pragyamtiwari@gmail.com", name="James", zip_code="10018", interest_names=["Indian politics", "world affairs", "technology", "startups"])
+    User(email="pragyamtiwari@gmail.com", name="Pragyam", zip_code="10018", interest_names=["Indian politics", "world affairs", "technology", "startups"])
 ]
 
 hm = {
@@ -28,7 +28,9 @@ for user in users:
         if interest.name not in explored_interest_stories:
             interest = Interest(name=interest.name)
             get_interest_headlines(interest)
+            print("Interest Headlines:")
             print(interest)
+            print("Selected Headline:")
             select_interest_headline(interest)
             if interest.selected_headline_index is None:
                 explored_interest_stories[interest.name] = "Placeholder for skipped interest story"

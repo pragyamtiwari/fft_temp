@@ -1,21 +1,19 @@
-import resend
+# https://docs.python.org/3/library/json.html
+# This library will be used to parse the JSON data returned by the API.
+import json
+# https://docs.python.org/3/library/urllib.request.html#module-urllib.request
+# This library will be used to fetch the API.
+import urllib.request
 
-import os
-from dotenv import load_dotenv
-load_dotenv()
+apikey = "3a17e828f28b1276d0a1241a08ff84aa"
+url = f"https://gnews.io/api/v4/search?q=indian+politics&lang=en&country=us&max=10&apikey={apikey}"
 
-resend.api_key = os.getenv("RESEND_API_KEY")
+with urllib.request.urlopen(url) as response:
+    data = json.loads(response.read().decode("utf-8"))
+    articles = data["articles"]
 
-def test():
-    params = {
-        "from": "Food For Thou <auth@foodforthou.com>",
-        "to": ["pragyamtiwari@gmail.com"],
-        "subject": "Food For Thou Authentication",
-        "html": f"<strong>Why isn't this working</strong>",
-    }
-    email = resend.Emails.send(params)
-    print(email)
-
-if __name__ == "__main__":
-    test()
-    
+    for i in range(len(articles)):
+        print(f"Title: {articles[i]['title']}")
+        print(f"Description: {articles[i]['description']}")
+        print(f"URL: {articles[i]['url']}")
+        print("-" * 50)

@@ -9,11 +9,20 @@ from workflow.nodes.get_weather import get_weather
 from workflow.models import Interest
 from workflow.nodes.send_story import send_story
 
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+from upstash_redis import Redis
+
+r = Redis(url="https://saving-rat-52046.upstash.io", token=os.getenv("UPSTASH_REDIS_TOKEN"))
+
+
 import time
 import random
 
 users = [
-    User(email="pragyamtiwari@gmail.com", name="Pragyam", zip_code="10018", interest_names=["Indian politics", "world affairs", "technology", "startups"])
+    User(email="pragyam.tiwari@gmail.com", name="Pragyam", zip_code="10018", interest_names=["soccer", "economy", "finance", "startups"])
 ]
 
 hm = {
@@ -25,7 +34,7 @@ forecasts = {}
 
 for user in users:
     for interest in user.interests:
-        if interest.name not in explored_interest_stories:
+        if r.get(interest.name) is None:
             interest = Interest(name=interest.name)
             get_interest_headlines(interest)
             print("Interest Headlines:")
@@ -43,11 +52,11 @@ for user in users:
         
             research_headline(interest)
             write_story(interest)
-            explored_interest_stories[interest.name] = str(interest.selected_headline.story)
+            r.set(interest.name, str(interest.selected_headline.story))
             print(interest.name, str(interest.selected_headline.story))
             print(f"Finished processing interest: {interest.name}")
-    if user.zip_code not in forecasts:
-        forecasts[user.zip_code] = get_weather(user.zip_code)
+    if r.get(user.zip_code) is None:
+        r.set(user.zip_code, get_weather(user.zip_code))
 
 
 for user in users:
@@ -60,16 +69,15 @@ for user in users:
     <div style="max-width: 600px; margin: 0 auto; background-color: white;">
         <div style="background-color: #f5f5f5; padding: 10px; border-bottom: 1px solid #ddd;">
             <h1 style="font-size: 24px; font-weight: normal; margin: 0 0 12px 0; color: #333; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">Good morning, {user.name}.</h1>
-            {forecasts[user.zip_code]}
+            {r.get(user.zip_code)}
         </div>
         <div style="padding: 10px;">
             <h2 style="font-size: 20px; font-weight: bold; color: #333; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 5px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">Here are your top stories for today.</h2>
 """
     res = [intro]
-    # res = [f"### Good morning, {user.name}.\n", forecasts[user.zip_code], "#### Here are your top stories for today.\n"]
     random.shuffle(user.interests)
     for interest in user.interests:
-        res.append(explored_interest_stories[interest.name])
+        res.append(r.get(interest.name))
     conclusion = """
         </div>
         <div style="background-color: #f5f5f5; text-align: center; padding: 8px; font-size: 17px; border-top: 1px solid #ddd; color: #666; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;">
@@ -83,4 +91,6 @@ for user in users:
     send_story(user.email, '\n'.join(res))
     with open(f"{user.name}.html", "w") as f:
         f.write('\n'.join(res))
+
+r.flushdb()
     

@@ -34,7 +34,7 @@ def research_headline_exa(interest, prompt):
         interest.selected_headline.research.append(f"{source.title} - {source.text}")
 
 def research_headline(interest):
-    prompt = f"Please provide deep research (what's happening, why it matters, what's the context, future implications, broader trends) for the following headline: {interest.selected_headline.title}. Please write a detailed, comprehensive answer that includes mostly factual information and some reasonable analysis and sepculation. Use relevant, reliable sources."
+    prompt = f"Please provide deep research (what's happening, why it matters, what's the context, future implications, broader trends) for the following headline: {interest.selected_headline.title}. Please write a detailed, comprehensive answer that includes mostly factual information and some reasonable analysis and sepculation. Use relevant, reliable sources. Though you should focus on context and future impliciations, the main focus is the new news which is {interest.selected_headline.title}."
     import random
     # if random.randint(0, 1) == 0:
     # print("Using Linkup")

@@ -68,7 +68,6 @@ if __name__ == "__main__":
         print(f"Processing interest: {interest.name}")
         get_interest_headlines(interest)
         select_interest_headline(interest)
-        print(interest.selected_headline.title)
-        print(interest.selected_headline.source)
+        print(interest.selected_headline)
         print("\n\n\n\n")
         

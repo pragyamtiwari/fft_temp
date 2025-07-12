@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="welcome-message">
+        <h2>Personalize Profile</h2>
+        <p>Customize your experience</p>
+    </div>
+
+    <form method="POST" class="profile-form">
+        <fieldset class="form-fieldset">
+            <legend>Contact Information</legend>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" readonly class="readonly-input">
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name *</label>
+                <input type="text" id="name" name="name"{% if user.name %} value="{{ user.name }}"{% endif %} placeholder="Enter your name" required>
+            </div>
+        </fieldset>
+
+        <fieldset class="form-fieldset">
+            <legend>Location</legend>
+            <div class="checkbox-group">
+                <input type="checkbox" id="in_usa" name="in_usa"{% if user.zip_code %} checked{% endif %} value="True">
+                <label for="in_usa">I'm located in the USA</label>
+            </div>
+            <div class="form-group">
+                <input type="text" id="zip_code" name="zip_code"{% if user.zip_code %} value="{{ user.zip_code }}"{% endif %} placeholder="Zip Code" class="zip-input">
+            </div>
+        </fieldset>
+
+        <fieldset class="form-fieldset">
+            <legend>Common Interests</legend>
+            <div class="interests-grid">
+                {% set interests = ['World', 'Politics', 'Business', 'Technology', 'Science', 'Health', 'Sports', 'Entertainment'] %}
+                {% for interest in interests %}
+                <div class="interest-item">
+                    <input type="checkbox" id="interest_{{ loop.index }}" name="common_interests" value="{{ interest }}"{% if interest in user.common_interests %} checked{% endif %}>
+                    <label for="interest_{{ loop.index }}">{{ interest }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </fieldset>
+
+        <fieldset class="form-fieldset">
+            <legend>Custom Interests</legend>
+            <div class="form-group">
+                <label for="custom_interests_input">Add Your Own Interests</label>
+                <p class="form-help">Type an interest and press Enter to add it</p>
+                <input type="text" id="custom_interests_input" placeholder="e.g., FC Barcelona, Brooklyn, Autonomous driving">
+                <div id="custom_interests_container" class="custom-interests-container"{% if not user.custom_interests_list or user.custom_interests_list|length == 0 %} style="display: none;"{% endif %}>
+                    {% if user.custom_interests_list %}
+                        {% for interest in user.custom_interests_list %}
+                            {% if interest %}
+                                <span class="interest-tag">{{ interest }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <textarea id="custom_interests" name="custom_interests" style="display: none;">{% if user.custom_interests %}{{ user.custom_interests }}{% endif %}</textarea>
+            </div>
+        </fieldset>
+
+        <button type="submit" class="submit-btn">Save Settings</button>
+    </form>
+</div>
+
+<script>
+    const inUsa = document.getElementById("in_usa");
+    const zipCode = document.getElementById("zip_code");
+    const customInterestsInput = document.getElementById("custom_interests_input");
+    const customInterestsContainer = document.getElementById("custom_interests_container");
+    const customInterestsTextarea = document.getElementById("custom_interests");
+
+    // Handle USA checkbox and zip code visibility
+    function updateZipCodeVisibility() {
+        if (inUsa.checked) {
+            zipCode.style.display = "block";
+            zipCode.style.opacity = "1";
+        } else {
+            zipCode.style.display = "none";
+            zipCode.value = "";
+        }
+    }
+
+    // Initialize zip code visibility
+    updateZipCodeVisibility();
+    
+    inUsa.addEventListener("change", updateZipCodeVisibility);
+
+    // Handle custom interests container visibility
+    function updateCustomInterestsContainerVisibility() {
+        const tags = customInterestsContainer.querySelectorAll('.interest-tag:not(.removing)');
+        if (tags.length === 0) {
+            customInterestsContainer.style.display = "none";
+        } else {
+            customInterestsContainer.style.display = "block";
+        }
+    }
+
+    // Handle custom interests
+    function updateCustomInterestsTextarea() {
+        const tags = customInterestsContainer.querySelectorAll('.interest-tag:not(.removing)');
+        const interests = Array.from(tags).map(tag => tag.textContent.trim());
+        customInterestsTextarea.value = interests.join(', ');
+        updateCustomInterestsContainerVisibility();
+    }
+
+    function createInterestTag(interest) {
+        const tag = document.createElement('span');
+        tag.className = 'interest-tag';
+        tag.textContent = interest;
+        
+        tag.addEventListener('mouseenter', function() {
+            this.style.textDecoration = 'line-through';
+            this.style.opacity = '0.7';
+        });
+        
+        tag.addEventListener('mouseleave', function() {
+            this.style.textDecoration = 'none';
+            this.style.opacity = '1';
+        });
+        
+        tag.addEventListener('click', function() {
+            this.classList.add('removing');
+            this.style.transform = 'scale(0)';
+            setTimeout(() => {
+                this.remove();
+                updateCustomInterestsTextarea();
+            }, 200);
+        });
+        
+        return tag;
+    }
+
+    customInterestsInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const interest = this.value.trim();
+            if (interest) {
+                const tag = createInterestTag(interest);
+                customInterestsContainer.appendChild(tag);
+                this.value = '';
+                updateCustomInterestsTextarea();
+            }
+        }
+    });
+
+    // Initialize existing interests as interactive tags
+    document.querySelectorAll('.interest-tag').forEach(tag => {
+        tag.addEventListener('mouseenter', function() {
+            this.style.textDecoration = 'line-through';
+            this.style.opacity = '0.7';
+        });
+        
+        tag.addEventListener('mouseleave', function() {
+            this.style.textDecoration = 'none';
+            this.style.opacity = '1';
+        });
+        
+        tag.addEventListener('click', function() {
+            this.classList.add('removing');
+            this.style.transform = 'scale(0)';
+            setTimeout(() => {
+                this.remove();
+                updateCustomInterestsTextarea();
+            }, 200);
+        });
+    });
+
+    // Update textarea and container visibility on page load
+    updateCustomInterestsTextarea();
+</script>
+
+{% endblock %}
